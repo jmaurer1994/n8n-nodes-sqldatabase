@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jmaurer/n8n-nodes-sqldatabase.git"
+    "url": "https://github.com/jmaurer1994/n8n-nodes-sqldatabase.git"
   },
   "main": "index.js",
   "scripts": {
