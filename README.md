@@ -1,10 +1,9 @@
-# n8n-nodes-sqldatabase
+# n8n-nodes-sqldatabase 
+**\*\*WIP\*\*** - Written and maintained by someone with a single Windows environment, self hosting n8n installed through npm. Apologies if you encounter difficulties when hosting n8n differently.
 
-**WIP
+This is an n8n community node. It lets you use a SQL Database in your n8n workflows.
 
-This is an n8n community node. It lets you use SQL Database in your n8n workflows.
-
-SQL Database allows you to connect to a database via a JDBC or ODBC connection.
+SQL Database allows you to connect to a database via a JDBC with plans to add ODBC support.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
@@ -18,39 +17,85 @@ SQL Database allows you to connect to a database via a JDBC or ODBC connection.
 
 ## Installation
 
+### Prerequisites 
+
+The following requirements must be met prior to installing this node:
+* Installed VS Build Tools or VS Community >= v2015 with C++ desktop development workload
+* Installed Python3 ('python' is expected on the path environment variable)
+* Installed Java JDK ('javac' is expected on the path environment variable)
+
+See [Resources](#resources) for more detail.
+
+### Install
 Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes/installation/) in the n8n community nodes documentation.
+
+  **_If installing through the n8n GUI fails:_**
+
+  Installing this node through the n8n GUI is throwing an error in my environment currently, node-gyp is unable to find the Visual Studio directory. I will update this section when I find a resolution.
+
+  If you also encounter this issue and would still like to help test or use this node, you may try to install it manually by doing the following:
+  #### 1. Stop n8n if it's currently running
+  #### 2. Open a new Windows command prompt
+  #### 3. Navigate to the .n8n/nodes directory  
+    cd [path to .n8n]/.n8n/nodes
+  #### 4. Use npm to install n8n-nodes-sqldatabase
+    npm i n8n-nodes-sqldatabase
+  #### 5. Start n8n
+
+  If successful, you should now see the node available in the editor. If you receive any errors during step 4, review them and confirm that you've properly installed/configured or have encountered an issue that I did not. If the node doesn't appear yet installs properly, check that you've added it to the correct .n8n folder for your desired server.
 
 ## Operations
 
-  Connection
-
-    --Open
-
-    --Close
-
-
-  Query
-
-    --Execute
+### Statement
+#### Execute  
+    Execute arbitrary SQL against a specified database. Supports dynamic parameters generated from prior node input.
+  
 
 ## Credentials
 
-_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
+### SQL Database credentials
+
+* Username
+* Password
+* Connection URL
+  * JDBC connection URL
+* Driver Class
+  * JDBC connection class
+* Driver Depdencies
+  * Files to include on the classpath when initializing the JVM
+
 
 ## Compatibility
 
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
+Tested install and execution with:
+* n8n version 1.1.1
+* node 18.16.0
+* Visual Studio Build Tools 2022
+* Python 3.11
+* Windows 11 & Windows Server 2022
+* JDK 20.0.2
 
 ## Usage
 
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
-
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+* Configure database credential
+* Add node to workflow
+* Input SQL
+* Execute node
 
 ## Resources
 
 * [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
-* _Link to app/service documentation._
+
+### Dependency Information
+* [node-java package, requires JDK and built with node-gype](https://github.com/joeferner/node-java)
+* [node-gyp package, requires VS Build Tools/Community and Python](https://github.com/nodejs/node-gyp#on-windows)
+
+### Requirement Downloads
+* [VS Build Tools 2022](https://github.com/nodejs/node-gyp#on-windows)
+* [VS Community 2022](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community)
+* [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
+* [Python](https://www.python.org/downloads/)
+
 
 ## Version history
 
