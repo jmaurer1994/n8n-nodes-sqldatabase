@@ -87,7 +87,7 @@ Tested install and execution with:
 * [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
 
 ### Dependency Information
-* [node-java package, requires JDK and built with node-gype](https://github.com/joeferner/node-java)
+* [node-java package, requires JDK and built with node-gyp](https://github.com/joeferner/node-java)
 * [node-gyp package, requires VS Build Tools/Community and Python](https://github.com/nodejs/node-gyp#on-windows)
 
 ### Requirement Downloads
