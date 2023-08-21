@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-sqldatabase",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An n8n community node to execute sql statements against a database. Currently supports JDBC driver connections, with planned support for ODBC",
   "keywords": [
     "n8n-community-node-package"
