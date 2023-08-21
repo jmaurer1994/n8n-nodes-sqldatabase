@@ -13,14 +13,8 @@ export const parse = (resultSet) => {
 
     for(let i = 0, n = columns.length; i < n; i++){
       const data = rs['get' + columns[i].type.name + 'Sync'](columns[i].index)
-
-      switch(columns[i].type.name){
-        case 'Date':
-          row[columns[i].name] = data.toString()
-          break;
-        default:
-          row[columns[i].name] = data
-      }
+      
+      row[columns[i].name] = data === null ? null : data.toString()
     }
     
     rows.push(row)
