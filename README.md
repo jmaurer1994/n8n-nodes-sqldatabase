@@ -22,7 +22,7 @@ SQL Database allows you to connect to a database via a JDBC with plans to add OD
 The following requirements must be met prior to installing this node:
 * Installed VS Build Tools or VS Community >= v2015 with C++ desktop development workload
 * Installed Python3 ('python' is expected on the path environment variable)
-* Installed Java JDK ('javac' is expected on the path environment variable)
+* Installed Java - JDK 1.8 ('javac' and 'java' are expected on the path environment variable, running javac or java with -version should show 1.8)
 
 See [Resources](#resources) for more detail.
 
@@ -73,7 +73,7 @@ Tested install and execution with:
 * Visual Studio Build Tools 2022
 * Python 3.11
 * Windows 11 & Windows Server 2022
-* JDK 20.0.2
+* JDK & JRE 1.8u381
 
 ## Usage
 
@@ -93,7 +93,7 @@ Tested install and execution with:
 ### Requirement Downloads
 * [VS Build Tools 2022](https://github.com/nodejs/node-gyp#on-windows)
 * [VS Community 2022](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community)
-* [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
+* [Oracle Java 8](https://www.oracle.com/java/technologies/downloads/#java8)
 * [Python](https://www.python.org/downloads/)
 
 
