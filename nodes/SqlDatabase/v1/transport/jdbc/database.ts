@@ -11,15 +11,17 @@ export const configure = async (
         jinst.addOption(jvmOption))
       jinst.setupClasspath(jvmClassPath);
     }
-  const db = new jdbc(jdbcOptions);
-
-  db?.initialize(function(err) {
-    if (err) {
-      console.log(err);
-    }
-  });
-
-  return db;
+  try {
+    const db = new jdbc(jdbcOptions);
+    db.initialize(function (err) {
+      if (err) {
+        throw err
+      }
+    });
+    return db;
+  } catch (e) {
+    throw new Error("Encountered an error initializing db: " + e)
+  }
 };
 
 /*
