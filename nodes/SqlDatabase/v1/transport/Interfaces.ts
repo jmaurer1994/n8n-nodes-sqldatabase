@@ -1,20 +1,26 @@
-export type IJdbcOptions = {
-  //required
-  url: string,
-  drivername?: string,
-  //optional
-  minpoolsize?: number,
-  maxpoolsize?: number,
+export interface ConnectionPool {
+  reservePoolConnection: any,
+  releasePoolConnection: any,
+  getConnectionPool: any,
+  destroyConnectionPool: any,
+}
 
+export interface ConnectionObject {
+  release: any,
+  createStatement: any,
+}
+
+
+export interface ConnectionOptions {
+  jdbcUrl: string,
   user?: string,
   password?: string,
-  properties?: {
-  }
+  minimumPoolConnections: number | 1,
+  maximumPoolConnections: number | 1
 }
 
 
-export type IJvmOptions = {
-
+export interface JavaOptions {
+  driverDirectory?: string[],
+  jvmArguments?: string[]
 }
-
-export type IJvmClasspath = string[]

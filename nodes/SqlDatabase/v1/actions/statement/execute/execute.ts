@@ -1,92 +1,60 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { createPoolRequest, executeStatementRequest } from '../../../transport';
+import { jdbc } from '../../../transport';
+import { ConnectionPool } from '../../../transport/Interfaces';
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function execute(
-	this: IExecuteFunctions,
+  this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
+  const results = []
+  const { user, password, jdbcUrl, driverDirectory } = await this.getCredentials('sqlDatabase') as any
+  //create pool
+  const { java, pool, statement, resultset } = jdbc;
 
-	let queries: any[] = []
-	const items = this.getInputData()
+  java.initializeJvm({
+    driverDirectory
+  })
 
-	this.logger.debug("Parsing input queries")
+  const poolOptions = {
+    minimumPoolConnections: 1,
+    maximumPoolConnections: 1,
+    jdbcUrl,
+    user,
+    password
+  }
 
-	for(let i = 0, n = items.length; i < n; ++i){
-		let query = this.getNodeParameter('sqlStatement', i) as string
-		const { parameters } = this.getNodeParameter('sqlParameters', i) as any
-		if(parameters?.length > 0){
-			const regex = /%[a-zA-Z0-9]{1,12}%/;
-			const tokens = query.match(regex) as any[]
-			if(tokens){
-				for(let i = 0, n = tokens.length; i < n; ++i){
-					const matchedParams = parameters.filter(parameter => parameter.key === tokens[i].substring(1, tokens[i].length - 1))
-					if(matchedParams.length > 0){
-						const {value} = matchedParams[0]
-						query = query.replaceAll(tokens[i], value)
-					}
-				}
-			}
-		}
+  const { getConnectionPool } = pool.createConnectionPool(poolOptions)
+  const connectionPool = getConnectionPool();
 
-		queries.push(query)
-	}
+  const items = this.getInputData();
 
-	try{
-		const pool = await createPoolRequest.call(this)
-		console.log("Established connection to server")
-		
-		console.log(`Executing ${ queries.length } queries`)
-		this.logger.log('debug',`Executing ${ queries.length } queries`)
+  let connectionCounter = connectionPool.length;
+  let itemIndex = 0;
 
-		const rawResults :any[] = []
+  while(itemIndex > 0){
+    const sql = this.getNodeParameter('sqlStatement', itemIndex);
 
-		for(let i = 0, n = queries.length; i < n; ++i){
-			try{
-				const result = await executeStatementRequest.call(this, pool, queries[i])
-				
-				console.log(`[${i}]: ${result.length} results`)
-				rawResults.push(result)
-			} catch (e){
-				if (this.continueOnFail()) {
-					rawResults.push({ json: this.getInputData(i)[0].json, error: e });
-				} else {
-					console.log(e)
-					if (e.context) e.context.itemIndex = i;
-					throw e;
-				}
-			}
-		}
+    if(connectionCounter > 0){
+      connectionCounter--;
+      const connectionObject = connectionPool.pop();
+      const resultSet = statement.executeStatement(connectionObject, sql);
 
-		console.log("Returning Results")
-		let results :any[] = []
+      while(resultSet.next()){
+        console.log("test")
+      }
 
-		const { groupOutput } = this.getNodeParameter('additionalOptions', 0) as any
+      resultSet.close();
 
-		if(groupOutput){
-			const groupedResults :any[] = []
+      connectionPool.push(connectionObject);
+      connectionCounter++;
+    } else {
+      console.log("Awaiting free connection to continue processing")
+      await sleep(100);
+    }
+  }
+  //return
+  
 
-			for(let i = 0, n = rawResults.length; i < n; ++i){
-				if(rawResults[i]?.length){
-					groupedResults.push(...rawResults[i])
-				}
-			}
-
-			results = this.helpers.returnJsonArray(groupedResults)
-		} else {
-			for(let i = 0, n = items.length; i < n; ++i){
-				console.log(rawResults[i])
-
-				results.push({
-					"json": { results: rawResults[i]},
-					"pairedItem": {
-						"item": items[i].pairedItem
-					}
-				})
-			}
-		}
-
-		return results
-	} catch (e) {
-		console.log("execute() outside: ",e)
-		throw e
-	 }
+  return results
 }

@@ -8,8 +8,8 @@ export class SqlDatabase implements ICredentialType {
 	displayName = 'SQL Database';
 	properties: INodeProperties[] = [
 		{
-			displayName: 'Username',
-			name: 'username',
+			displayName: 'User',
+			name: 'user',
 			type: 'string',
 			required: true,
 			default: '',
@@ -25,25 +25,26 @@ export class SqlDatabase implements ICredentialType {
 			default: '',
 		},
 		{
-			displayName: 'Connection URL',
-			name: 'connectionUrl',
-			type: 'string',
-			hint: 'JDBC Connection URL',
+			displayName: 'JDBC Connection URL',
+			name: 'jdbcUrl',
+      type: 'string',
+      required: true,
+			hint: 'Consult your database\'s JDBC driver documentation',
 			default: '',
 		},
 		{
 			displayName: 'Driver Class',
 			name: 'driverClass',
 			type: 'string',
-			hint: 'JDBC Driver Class',
-			default: '',
+			hint: '',
+      default: 'Consult your database\'s JDBC driver documentation',
 		},
 		{
-			displayName: 'Driver Dependencies',
+			displayName: 'Driver directory',
 			name: 'driverDependencies',
-			type: 'json',
-			hint: 'JDBC Driver Dependencies',
-			default: [],
+			type: 'string',
+			hint: 'Directory containing JDBC driver JAR files to add onto the JVM classpath',
+			default: '',
 		},
 	];
 }
