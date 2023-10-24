@@ -36,15 +36,22 @@ export class SqlDatabase implements ICredentialType {
 			displayName: 'Driver Class',
 			name: 'driverClass',
 			type: 'string',
-			hint: '',
-      default: 'Consult your database\'s JDBC driver documentation',
+      hint: 'Consult your database\'s JDBC driver documentation',
+      default: '',
 		},
 		{
 			displayName: 'Driver directory',
-			name: 'driverDependencies',
+			name: 'driverDirectory',
 			type: 'string',
 			hint: 'Directory containing JDBC driver JAR files to add onto the JVM classpath',
 			default: '',
-		},
+    },
+    {
+      displayName: 'Maxiumum Concurrent Connections',
+      name: 'maxConcurrentConnections',
+      type: 'number',
+      hint: 'Limit number of connections',
+      default: 1,
+    },
 	];
 }

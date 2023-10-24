@@ -1,60 +1,51 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { jdbc } from '../../../transport';
-import { ConnectionPool } from '../../../transport/Interfaces';
+import { executeStatementBatch } from '../../../transport';
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export const SqlDatabaseNodeOptions = {} as any;
 
 export async function execute(
   this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
-  const results = []
-  const { user, password, jdbcUrl, driverDirectory } = await this.getCredentials('sqlDatabase') as any
-  //create pool
-  const { java, pool, statement, resultset } = jdbc;
+  const { user, password, jdbcUrl, driverDirectory, maxConcurrentConnections } = await this.getCredentials('sqlDatabase') as any;
 
-  java.initializeJvm({
-    driverDirectory
-  })
+  SqlDatabaseNodeOptions.continueOnFail = this.continueOnFail();
 
-  const poolOptions = {
-    minimumPoolConnections: 1,
-    maximumPoolConnections: 1,
-    jdbcUrl,
+  const connectionOptions = {
     user,
-    password
-  }
+    password,
+    jdbcUrl
+  } as any;
 
-  const { getConnectionPool } = pool.createConnectionPool(poolOptions)
-  const connectionPool = getConnectionPool();
-
-  const items = this.getInputData();
-
-  let connectionCounter = connectionPool.length;
-  let itemIndex = 0;
-
-  while(itemIndex > 0){
-    const sql = this.getNodeParameter('sqlStatement', itemIndex);
-
-    if(connectionCounter > 0){
-      connectionCounter--;
-      const connectionObject = connectionPool.pop();
-      const resultSet = statement.executeStatement(connectionObject, sql);
-
-      while(resultSet.next()){
-        console.log("test")
+  if (typeof maxConcurrentConnections !== 'number'){
+    const _maxConcurrentConnections = parseInt(maxConcurrentConnections);
+    if(!isNaN(_maxConcurrentConnections)){
+      //is a number
+      connectionOptions.maxConcurrentConnections = _maxConcurrentConnections;
+    } else {
+      if(!SqlDatabaseNodeOptions.continueOnFail){
+        throw new Error("Invalid parameter supplied: maxConcurrentConnections");
       }
 
-      resultSet.close();
-
-      connectionPool.push(connectionObject);
-      connectionCounter++;
-    } else {
-      console.log("Awaiting free connection to continue processing")
-      await sleep(100);
+      connectionOptions.maxConcurrentConnections = 1;
     }
+  } else {
+    connectionOptions.maxConcurrentConnections = maxConcurrentConnections;
   }
-  //return
-  
 
-  return results
+
+  const javaOptions = {
+    driverDirectory
+  }
+
+  
+  //Wrap the getNodeParameter call to avoid passing the calling context around
+  const numberOfStatements = this.getInputData().length;
+  const getStatement = (i) => {
+    if(i < numberOfStatements){
+      return this.getNodeParameter('sqlStatement', i);
+    }
+    return null
+  }
+
+  return await executeStatementBatch(javaOptions, connectionOptions, getStatement);
 }

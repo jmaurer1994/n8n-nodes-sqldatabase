@@ -3,6 +3,7 @@ export interface ConnectionPool {
   releasePoolConnection: any,
   getConnectionPool: any,
   destroyConnectionPool: any,
+  getConnectionCount: any,
 }
 
 export interface ConnectionObject {
@@ -10,17 +11,3 @@ export interface ConnectionObject {
   createStatement: any,
 }
 
-
-export interface ConnectionOptions {
-  jdbcUrl: string,
-  user?: string,
-  password?: string,
-  minimumPoolConnections: number | 1,
-  maximumPoolConnections: number | 1
-}
-
-
-export interface JavaOptions {
-  driverDirectory?: string[],
-  jvmArguments?: string[]
-}
