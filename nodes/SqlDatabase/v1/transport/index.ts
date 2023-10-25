@@ -4,7 +4,7 @@ import { createStatementQueue } from './statement'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export const executeStatementBatch = async (javaOptions, connectionOptions, getStatement) => {
+export const executeStatementBatch = async (javaOptions, connectionOptions, outputOptions, getStatement) => {
   const javaInstance = java.initializeJvm(javaOptions);
 
   javaInstance.import('java.sql.Types');
@@ -41,30 +41,12 @@ export const executeStatementBatch = async (javaOptions, connectionOptions, getS
     taskResults.push(taskResult);
 
     taskResult.then(rawResult => {
-      console.log("Storing result")
-      statementBatchResults.push(formatForOutput(rawResult));
+      console.log("Storing result");
+      statementBatchResults.push(rawResult);
     });
   } while (true);
 
-  console.log("Closing batch")
+  console.log("Closing batch");
   destroyWorkerPool();
   return statementBatchResults;
 }
-
-
-const formatForOutput = (batchResults) => {
-  const { columns, data } = batchResults;
-  const results: any[] = [];
-
-  console.log("Formatting result for output")
-
-  for (let i = 0; i < data.length; i++) {
-    const formattedRow = {}
-    for (let j = 0; j < columns.length; j++) {
-      formattedRow[columns[j].name] = data[i][j];
-    }
-    results.push(formattedRow);
-  }
-  return { json: results };
-}
-

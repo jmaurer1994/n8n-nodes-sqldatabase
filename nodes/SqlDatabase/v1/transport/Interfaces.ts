@@ -1,4 +1,4 @@
-export interface ConnectionPool {
+export interface ExecuteStatementBatch {
   reservePoolConnection: any,
   releasePoolConnection: any,
   getConnectionPool: any,

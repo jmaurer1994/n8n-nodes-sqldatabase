@@ -33,18 +33,12 @@ export const statementExecuteProperties: StatementProperties = [
 				],
 			},
 		},
-		options: [
+    options: [
 			{
 				displayName: 'Group Output',
 				name: 'groupOutput',
 				type: 'boolean',
 				default: false,
-      },
-      {
-        displayName: 'Output Results to Binary',
-        name: 'outputBinaryResults',
-        type: 'boolean',
-        default: false,
       },
 		],
 	},
