@@ -1,9 +1,7 @@
 # n8n-nodes-sqldatabase 
-**\*\*WIP\*\*** - Written and maintained by someone with a single Windows environment, self hosting n8n installed through npm. Apologies if you encounter difficulties when hosting n8n differently.
-
 This is an n8n community node. It lets you use a SQL Database in your n8n workflows.
 
-SQL Database allows you to connect to a database via a JDBC with plans to add ODBC support.
+SQL Database allows you to connect to a database via a JDBC.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
@@ -19,10 +17,10 @@ SQL Database allows you to connect to a database via a JDBC with plans to add OD
 
 ### Prerequisites 
 
-The following requirements must be met prior to installing this node:
-* Installed VS Build Tools or VS Community >= v2015 with C++ desktop development workload
-* Installed Python3 ('python' is expected on the path environment variable)
-* Installed Java - JDK 1.8 ('javac' and 'java' are expected on the path environment variable, running javac or java with -version should show 1.8)
+The following dependenices must be installed prior to using this node:
+* VS Build Tools or VS Community >= v2015 with C++ desktop development workload
+* Python3
+* Java 8
 
 See [Resources](#resources) for more detail.
 
@@ -57,12 +55,8 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 * Username
 * Password
-* Connection URL
-  * JDBC connection URL
-* Driver Class
-  * JDBC connection class
-* Driver Depdencies
-  * Files to include on the classpath when initializing the JVM
+* JDBC connection URL
+* Driver Directory
 
 
 ## Compatibility
