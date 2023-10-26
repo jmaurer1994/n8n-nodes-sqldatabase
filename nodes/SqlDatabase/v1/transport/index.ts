@@ -18,7 +18,7 @@ export const executeStatementBatch = async (javaOptions, connectionOptions, outp
   console.log("Beginning batch process");
   do {
     const statement = dequeueStatement();
-    if (statement === null) {
+    if (statement.sql === null) {
       const busyWorkers = busyWorkerCount();
       if (busyWorkers > 0) {
         console.log(`Waiting for ${busyWorkers} worker to finish their task`);

@@ -64,7 +64,7 @@ const formatForOutput = (batchResults, { groupOutput }) => {
   let referenceCols = null;
 
   for (let i = 0; i < batchResults.length; i++) {
-    const { columns, data } = batchResults[i];
+    const { columns, data, itemIndex } = batchResults[i];
     const resultTarget = groupOutput ? results : [];
 
     if(groupOutput){
@@ -74,7 +74,7 @@ const formatForOutput = (batchResults, { groupOutput }) => {
       }
 
       if(cols !== referenceCols){
-        throw new Error(`Unable to group output - column mismatch between query results\n\tExpected: ${referenceCols}\n\tGot: ${cols}`)
+        throw new Error(`Unable to group output - column mismatch between query results\n\tExpected: ${referenceCols}\n\tGot: ${cols}`);
       }
     }
     for (let i = 0; i < data.length; i++) {
@@ -84,14 +84,14 @@ const formatForOutput = (batchResults, { groupOutput }) => {
       }
 
       if (groupOutput) {
-        resultTarget.push({ json: formattedRow });
+        resultTarget.push({ json: formattedRow, pairedItem: itemIndex });
       } else {
         resultTarget.push(formattedRow);
       }
     }
 
     if(!groupOutput){
-      results.push({ json: { result: resultTarget} })
+      results.push({ json: { result: resultTarget}, pairedItem: itemIndex });
     }
   }
 
