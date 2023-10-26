@@ -39,7 +39,7 @@ export const processStatement = (statement, connectionObject) => {
     try {
       const statementObject = connectionObject.createStatement();
 
-      statementObject.executeQueryAsync(sql, (err, resultSetObject) => {
+      statementObject.executeQueryAsync(sql, async (err, resultSetObject) => {
         if (err) {
           try {
             if (!statementObject.isClosed()) {
@@ -47,24 +47,34 @@ export const processStatement = (statement, connectionObject) => {
             }
           } catch (e) {
             //attempt cleanup, but the statement is probably closed at this point anyway
-            logger().log('debug',`Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
+            logger().log('debug', `Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
           }
-          reject(err);
+          reject(err); return;
         }
 
-        processResultSet(resultSetObject, (err, result) => {
-          //Todo check if they need to be closed first
+        logger().log('debug', `Executed query, processing resultset`);
 
-          resultSetObject.close();
-          statementObject.close();
-
-          if (err) {
-            reject(err); return;
+        const { columns, data } = await processResultSet(resultSetObject);
+        //Todo check if they need to be closed first
+        try {
+          if (!resultSetObject.isClosed()) {
+            resultSetObject.close();
           }
+        } catch (e) {
+          //attempt cleanup, but the statement is probably closed at this point anyway
+          logger().log('debug', `Attempted to close resultset, but encountered an error\n\titem: ${statement.statementIndex}`);
+        }
 
-          result.itemIndex = itemIndex;
-          resolve(result); return;
-        })
+        try {
+          if (!statementObject.isClosed()) {
+            statementObject.close();
+          }
+        } catch (e) {
+          //attempt cleanup, but the statement is probably closed at this point anyway
+          logger().log('debug', `Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
+        }
+
+        resolve({ columns, data, itemIndex}); return;
       });
     } catch (e) {
       logger().log('error', `Error while processing statement at item index ${statement.itemIndex}`);
