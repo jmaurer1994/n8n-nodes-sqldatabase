@@ -1,6 +1,7 @@
 import { getJavaInstance } from "./java";
 import { v4 as uuidv4 } from 'uuid';
 import { processStatement } from "./statement";
+import { logger } from "../actions/statement/execute/execute";
 
 export const createWorkerPool = (connectionOptions) => {
   const workerPool: any[] = [];
@@ -21,7 +22,6 @@ export const createWorkerPool = (connectionOptions) => {
   return {
     dispatchTask: (statement) => {
       let worker;
-      console.log("Retrieving free worker");
       if (workerPool.length === 0) {
         if (workerCount === connectionOptions.maxConcurrentConnections) {
           return null;
@@ -31,10 +31,11 @@ export const createWorkerPool = (connectionOptions) => {
         worker = workerPool.pop();
       }
 
+      logger().log('debug', `Retrieved worker ${worker.uuid } from free pool`);
       const processPromise = worker.handleTask(statement);
 
       processPromise.then(() => {
-        console.log("Returning worker to free pool");
+        logger().log('debug', `Returning worker ${worker.uuid} to free pool`);
         workerPool.push(worker);
       })
 
@@ -45,7 +46,7 @@ export const createWorkerPool = (connectionOptions) => {
       while (workerPool.length > 0) {
         const worker = workerPool.pop();
         worker.connectionObject.close();
-        console.log("Laid off all workers");
+        logger().log('debug', "Laid off all workers");
       }
     }
   }

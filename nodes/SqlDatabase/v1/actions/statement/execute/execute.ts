@@ -3,9 +3,15 @@ import { executeStatementBatch } from '../../../transport';
 
 export const SqlDatabaseNodeOptions = {} as any;
 
+let _logger = null as any;
+
+export const logger = () => _logger;
+
 export async function execute(
   this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
+  _logger = this.logger;
+
   const { user, password, jdbcUrl, driverDirectory, maxConcurrentConnections } = await this.getCredentials('sqlDatabase') as any;
 
   SqlDatabaseNodeOptions.continueOnFail = this.continueOnFail();
@@ -46,7 +52,7 @@ export async function execute(
     return null;
   }
 
-  const batchResults = await executeStatementBatch(javaOptions, connectionOptions, outputOptions, getStatement);
+  const batchResults = await executeStatementBatch.call(this, javaOptions, connectionOptions, getStatement);
 
   return formatForOutput(batchResults, outputOptions);
 }
@@ -59,7 +65,7 @@ export async function execute(
 const formatForOutput = (batchResults, { groupOutput }) => {
   const results: any[] = [];
 
-  console.log(`Formatting result for output`);
+  logger().log(`Formatting result for output`);
 
   let referenceCols = null;
 

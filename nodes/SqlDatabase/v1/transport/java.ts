@@ -1,7 +1,7 @@
 import NodeJavaCore, { NodeAPI } from "java";
 import { readdirSync, realpathSync } from 'node:fs';
-import { SqlDatabaseNodeOptions } from "../actions/statement/execute/execute";
 
+import { logger } from "../actions/statement/execute/execute";
 
 NodeJavaCore.asyncOptions = {
   asyncSuffix: "Async",
@@ -37,11 +37,9 @@ export const initializeJvm = (javaOptions) => {
       err.push("Specified path not found");
     }
 
-    console.log(err.join(': '))
+    logger().log('error',err.join(': '));
 
-    if(!SqlDatabaseNodeOptions.continueOnFail){
-      throw Error("Could not initialize JVM");
-    }
+    throw Error(err.join(': '));
   }
 
   return NodeJavaCore;

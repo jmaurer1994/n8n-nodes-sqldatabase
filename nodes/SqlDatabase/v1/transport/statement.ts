@@ -1,3 +1,4 @@
+import { logger } from "../actions/statement/execute/execute";
 import { processResultSet } from "./resultset";
 
 export const createStatementQueue = (getStatement) => {
@@ -8,7 +9,7 @@ export const createStatementQueue = (getStatement) => {
   const dequeueStatement = () => {
     if (retryQueue.length > 0) {
       const statement = retryQueue.pop();
-      console.log(`Retrying failed query: ${statement.split('\n').join('\n\t')}`);
+      logger().log('debug', `Retrying failed query: ${statement.split('\n').join('\n\t')}`);
       return retryQueue.pop();
     }
 
@@ -33,10 +34,11 @@ export const createStatementQueue = (getStatement) => {
 
 export const processStatement = (statement, connectionObject) => {
   return new Promise((resolve, reject) => {
-    const statementObject = connectionObject.createStatement();
     const { sql, itemIndex } = statement;
-    console.log(statement)
+    logger().log('debug', `Processing statement at item index ${itemIndex}\n\tsql:\n\t\t${sql.split('\n').join('\t\t\n')}\n`)
     try {
+      const statementObject = connectionObject.createStatement();
+
       statementObject.executeQueryAsync(sql, (err, resultSetObject) => {
         if (err) {
           try {
@@ -45,10 +47,11 @@ export const processStatement = (statement, connectionObject) => {
             }
           } catch (e) {
             //attempt cleanup, but the statement is probably closed at this point anyway
-            console.log(`Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
+            logger().log('debug',`Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
           }
           reject(err);
         }
+
         processResultSet(resultSetObject, (err, result) => {
           //Todo check if they need to be closed first
 
@@ -64,6 +67,7 @@ export const processStatement = (statement, connectionObject) => {
         })
       });
     } catch (e) {
+      logger().log('error', `Error while processing statement at item index ${statement.itemIndex}`);
       reject(e); return;
     }
   })
