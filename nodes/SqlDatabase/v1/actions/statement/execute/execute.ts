@@ -52,7 +52,7 @@ export async function execute(
     return null;
   }
 
-  const batchResults = await executeStatementBatch.call(this, javaOptions, connectionOptions, getStatement);
+  const batchResults = await executeStatementBatch(javaOptions, connectionOptions, getStatement);
 
   return formatForOutput(batchResults, outputOptions);
 }
