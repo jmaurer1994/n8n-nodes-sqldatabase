@@ -29,15 +29,17 @@ export const executeStatementBatch = async (javaOptions, connectionOptions, getS
       logger().log('debug', "Finished processing all statements");
       break;
     }
-    logger().log('debug', `Got item ${statement.itemIndex} from queue, dispatching for processing`);
 
-    const taskResult = dispatchTask(statement);
-    if (taskResult === null) {
-      //couldnt reserve another connection
-      logger().log('debug', "Waiting for free connection to continue processing");
-      await sleep(1000);
-      continue;
-    }
+    logger().log('debug', `Got item ${statement.itemIndex} from queue, dispatching for processing`);
+    let taskResult = null as any;
+    do {
+      taskResult = dispatchTask(statement);
+      if (taskResult === null) {
+        //couldnt reserve another connection
+        logger().log('debug', "Waiting for free connection to continue processing");
+        await sleep(1000);
+      }
+    } while (taskResult === null);
 
     taskResults.push(taskResult);
 

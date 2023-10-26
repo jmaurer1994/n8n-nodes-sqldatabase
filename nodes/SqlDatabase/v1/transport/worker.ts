@@ -46,8 +46,8 @@ export const createWorkerPool = (connectionOptions) => {
       while (workerPool.length > 0) {
         const worker = workerPool.pop();
         worker.connectionObject.close();
-        logger().log('debug', "Laid off all workers");
       }
+      logger().log('debug', "Laid off all workers");
     }
   }
 }
