@@ -65,7 +65,7 @@ export async function execute(
 const formatForOutput = (batchResults, { groupOutput }) => {
   const results: any[] = [];
 
-  logger().log(`Formatting result for output`);
+  logger().log('debug', `Formatting result for output`);
 
   let referenceCols = null;
 
