@@ -1,7 +1,7 @@
-import { getJavaInstance } from "./java";
 import { v4 as uuidv4 } from 'uuid';
 import { processStatement } from "./statement";
 import { logger } from "../actions/statement/execute/execute";
+import { reserveConnection } from './connection';
 
 export const createWorkerPool = (connectionOptions) => {
   const workerPool: any[] = [];
@@ -50,20 +50,4 @@ export const createWorkerPool = (connectionOptions) => {
       logger().log('debug', "Laid off all workers");
     }
   }
-}
-
-const reserveConnection = (connectionOptions) => {
-  const java = getJavaInstance();
-  const connectionProperties = java.newInstanceSync('java.util.Properties');
-  if (connectionOptions.user) {
-    connectionProperties.put('user', connectionOptions.user);
-  }
-
-  if (connectionOptions.password) {
-    connectionProperties.put('password', connectionOptions.password);
-  }
-
-  const connectionObject = java.callStaticMethodSync('java.sql.DriverManager', 'getConnection', connectionOptions.jdbcUrl, connectionProperties);
-
-  return connectionObject;
 }
