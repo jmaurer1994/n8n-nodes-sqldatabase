@@ -12,12 +12,13 @@ export async function execute(
 ): Promise<INodeExecutionData[]> {
   _logger = this.logger;
 
-  const { user, password, jdbcUrl, driverDirectory, maxConcurrentConnections } = await this.getCredentials('sqlDatabase') as any;
+  const { user, password, jdbcUrl, driverDirectory, driverClass, maxConcurrentConnections } = await this.getCredentials('sqlDatabase') as any;
 
   SqlDatabaseNodeOptions.continueOnFail = this.continueOnFail();
 
   const javaOptions = {
-    driverDirectory
+    driverDirectory,
+    driverClass
   }
 
   const connectionOptions = {
@@ -25,6 +26,10 @@ export async function execute(
     password,
     jdbcUrl
   } as any;
+
+  if(driverClass && driverClass !== ''){
+    connectionOptions.driverClass = driverClass
+  }
 
   if (typeof maxConcurrentConnections !== 'number'){
     const _maxConcurrentConnections = parseInt(maxConcurrentConnections);
