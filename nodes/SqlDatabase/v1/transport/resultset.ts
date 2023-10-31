@@ -1,4 +1,4 @@
-import { logger } from "../actions/statement/execute/execute";
+import { logger } from "../actions";
 import { getColumnTypeByValue } from "./sqltypes";
 
 export const processResultSet = async (resultSetObject) => {

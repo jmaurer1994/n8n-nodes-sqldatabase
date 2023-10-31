@@ -3,5 +3,5 @@ export interface SqlDatabaseCredential{
   password: string,
   connectionUrl: string,
   driverClass?: string,
-  driverDependencies?: any
+  driverDirectory?: string
 }

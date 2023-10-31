@@ -1,51 +1,12 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { executeStatementBatch } from '../../../transport';
-
-export const SqlDatabaseNodeOptions = {} as any;
-
-let _logger = null as any;
-
-export const logger = () => _logger;
+import { logger } from '../..';
 
 export async function execute(
   this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
-  _logger = this.logger;
 
-  const { user, password, jdbcUrl, driverDirectory, driverClass, maxConcurrentConnections } = await this.getCredentials('sqlDatabase') as any;
 
-  SqlDatabaseNodeOptions.continueOnFail = this.continueOnFail();
-
-  const javaOptions = {
-    driverDirectory,
-    driverClass
-  }
-
-  const connectionOptions = {
-    user,
-    password,
-    jdbcUrl
-  } as any;
-
-  if(driverClass && driverClass !== ''){
-    connectionOptions.driverClass = driverClass
-  }
-
-  if (typeof maxConcurrentConnections !== 'number'){
-    const _maxConcurrentConnections = parseInt(maxConcurrentConnections);
-    if(!isNaN(_maxConcurrentConnections)){
-      //is a number
-      connectionOptions.maxConcurrentConnections = _maxConcurrentConnections;
-    } else {
-      if(!SqlDatabaseNodeOptions.continueOnFail){
-        throw new Error("Invalid parameter supplied: maxConcurrentConnections");
-      }
-
-      connectionOptions.maxConcurrentConnections = 1;
-    }
-  } else {
-    connectionOptions.maxConcurrentConnections = maxConcurrentConnections;
-  }
   const outputOptions = this.getNodeParameter('additionalOptions', 0) as any;
   
   //Wrap the getNodeParameter call to avoid passing the calling context around
@@ -57,7 +18,7 @@ export async function execute(
     return null;
   }
 
-  const batchResults = await executeStatementBatch(javaOptions, connectionOptions, getStatement);
+  const batchResults = await executeStatementBatch(getStatement);
 
   return formatForOutput(batchResults, outputOptions);
 }

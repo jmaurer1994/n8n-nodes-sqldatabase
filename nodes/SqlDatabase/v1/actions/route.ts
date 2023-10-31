@@ -1,15 +1,22 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import type { SqlDatabase } from './Interfaces';
-
 import * as statement from './statement';
+import { setExecutionParameters } from './parameters';
+import { logger } from '.';
+
+
 
 export async function route(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	const operationResult: INodeExecutionData[] = [];
 
 	let executionData: INodeExecutionData | INodeExecutionData[] = [];
-
+  logger(this.logger);
 	const resource = this.getNodeParameter<SqlDatabase>('resource', 0);
 	let operation = this.getNodeParameter('operation', 0);
+
+  setExecutionParameters(
+    await this.getCredentials('sqlDatabase'),
+    this.continueOnFail());
 
 	const sqlDatabase = {
 		resource,

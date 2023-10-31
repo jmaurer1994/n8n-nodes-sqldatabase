@@ -1,16 +1,12 @@
-import * as java from './java'
 import { createWorkerPool } from './worker'
 import { createStatementQueue } from './statement'
-import { logger } from '../actions/statement/execute/execute';
+import { logger } from '../actions';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export const executeStatementBatch = async (javaOptions, connectionOptions, getStatement) => {
-  const javaInstance = java.initializeJvm(javaOptions);
+export const executeStatementBatch = async (getStatement) => {
 
-  javaInstance.import('java.sql.Types');
-
-  const { dispatchTask, busyWorkerCount, destroyWorkerPool } = createWorkerPool(connectionOptions);
+  const { dispatchTask, busyWorkerCount, destroyWorkerPool } = createWorkerPool();
   const { dequeueStatement } = createStatementQueue(getStatement);
 
   const statementBatchResults: any[] = [];

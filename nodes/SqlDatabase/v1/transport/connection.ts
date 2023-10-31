@@ -1,8 +1,11 @@
+import { SqlDatabaseExecutionParameters } from "../actions/parameters";
 import { getJavaInstance } from "./java";
 
-export const reserveConnection = ({user, password, jdbcUrl}) => {
+export const reserveConnection = () => {
   const java = getJavaInstance();
   const connectionProperties = java.newInstanceSync('java.util.Properties');
+  const { user, password, jdbcUrl } = SqlDatabaseExecutionParameters;
+
   if (user) {
     connectionProperties.put('user', user);
   }

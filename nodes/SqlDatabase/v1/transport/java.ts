@@ -1,7 +1,8 @@
 import NodeJavaCore, { NodeAPI } from "java";
 import { readdirSync, realpathSync } from 'node:fs';
 
-import { logger } from "../actions/statement/execute/execute";
+import { logger } from "../actions";
+import { SqlDatabaseExecutionParameters } from "../actions/parameters";
 
 NodeJavaCore.asyncOptions = {
   asyncSuffix: "Async",
@@ -12,8 +13,8 @@ export const getJavaInstance = (): NodeAPI => {
   return NodeJavaCore;
 }
 
-export const initializeJvm = ({ driverDirectory, driverClass }) => {
-
+export const initializeJvm = () => {
+  const { driverDirectory, driverClass } = SqlDatabaseExecutionParameters;
   if (NodeJavaCore.isJvmCreated()) {
     return NodeJavaCore;
   }

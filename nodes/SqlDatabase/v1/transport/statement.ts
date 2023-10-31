@@ -1,5 +1,5 @@
-import { logger } from "../actions/statement/execute/execute";
 import { processResultSet } from "./resultset";
+import { logger } from "../actions";
 
 export const createStatementQueue = (getStatement) => {
   const retryQueue: any[] = []

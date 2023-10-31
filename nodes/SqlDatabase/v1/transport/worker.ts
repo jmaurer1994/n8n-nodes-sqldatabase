@@ -1,21 +1,28 @@
 import { v4 as uuidv4 } from 'uuid';
 import { processStatement } from "./statement";
-import { logger } from "../actions/statement/execute/execute";
+import { logger } from "../actions";
 import { reserveConnection } from './connection';
+import * as java from './java';
+import { SqlDatabaseExecutionParameters } from '../actions/parameters';
 
-export const createWorkerPool = (connectionOptions) => {
+
+export const createWorkerPool = () => {
   const workerPool: any[] = [];
   let workerCount = 0;
+  const javaInstance = java.initializeJvm();
 
+  javaInstance.import('java.sql.Types');
   const spawnWorker = () => {
     const uuid = uuidv4();
-    const connectionObject = reserveConnection(connectionOptions);
+    const connectionObject = reserveConnection();
     workerCount++;
 
     return {
       uuid,
       connectionObject,
-      handleTask: (statement) => processStatement(statement, connectionObject)
+      handleTask: (statement) => {
+        return processStatement(statement, connectionObject)
+      }
     }
   }
 
@@ -23,7 +30,7 @@ export const createWorkerPool = (connectionOptions) => {
     dispatchTask: (statement) => {
       let worker;
       if (workerPool.length === 0) {
-        if (workerCount === connectionOptions.maxConcurrentConnections) {
+        if (workerCount === SqlDatabaseExecutionParameters.maxConcurrentConnections) {
           return null;
         }
         worker = spawnWorker();
