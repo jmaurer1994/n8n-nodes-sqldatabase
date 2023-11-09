@@ -31,11 +31,11 @@ export const createWorkerPool = (connectionOptions) => {
         worker = workerPool.pop();
       }
 
-      logger().log('debug', `Retrieved worker ${worker.uuid } from free pool`);
+      logger().debug(`Retrieved worker ${worker.uuid } from free pool`);
       const processPromise = worker.handleTask(statement);
 
       processPromise.then(() => {
-        logger().log('debug', `Returning worker ${worker.uuid} to free pool`);
+        logger().debug(`Returning worker ${worker.uuid} to free pool`);
         workerPool.push(worker);
       })
 
@@ -47,7 +47,7 @@ export const createWorkerPool = (connectionOptions) => {
         const worker = workerPool.pop();
         worker.connectionObject.close();
       }
-      logger().log('debug', "Laid off all workers");
+      logger().debug("Laid off all workers");
     }
   }
 }

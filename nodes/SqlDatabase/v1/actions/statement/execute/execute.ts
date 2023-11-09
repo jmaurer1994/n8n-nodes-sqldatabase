@@ -11,7 +11,6 @@ export async function execute(
   this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
   _logger = this.logger;
-
   const { user, password, jdbcUrl, driverDirectory, driverClass, maxConcurrentConnections } = await this.getCredentials('sqlDatabase') as any;
 
   SqlDatabaseNodeOptions.continueOnFail = this.continueOnFail();
@@ -70,7 +69,7 @@ export async function execute(
 const formatForOutput = (batchResults, { groupOutput }) => {
   const results: any[] = [];
 
-  logger().log('debug', `Formatting result for output`);
+  logger().debug(`Formatting result for output`);
 
   let referenceCols = null;
 
