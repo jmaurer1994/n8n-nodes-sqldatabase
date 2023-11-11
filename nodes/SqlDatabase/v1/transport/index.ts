@@ -1,7 +1,8 @@
 import * as java from './java'
 import { createWorkerPool } from './worker'
 import { createStatementQueue } from './statement'
-import { logger } from '../actions/statement/execute/execute';
+import { SqlDatabaseNodeOptions, logger } from '../actions/statement/execute/execute';
+
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -44,8 +45,14 @@ export const executeStatementBatch = async (javaOptions, connectionOptions, getS
     taskResults.push(taskResult);
 
     taskResult.then(rawResult => {
-      logger().debug(`Storing result for item ${rawResult.itemIndex}`);
+      logger().verbose(`Storing result for item ${rawResult.itemIndex}`);
       statementBatchResults.push(rawResult);
+    }).catch(e => {
+      logger().error(`An error was encountered during task execution for statement ${ statement.itemIndex }\t\n${e}`);
+      if(!SqlDatabaseNodeOptions.continueOnFail){
+        throw e;
+      }
+      logger().verbose(`Continuing execution based on execution parameter`);
     });
   } while (true);
 

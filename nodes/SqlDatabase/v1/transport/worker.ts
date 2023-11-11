@@ -30,12 +30,17 @@ export const createWorkerPool = (connectionOptions) => {
       } else {
         worker = workerPool.pop();
       }
+      logger().debug(`<${worker.uuid}>: not free`);
 
-      logger().debug(`Retrieved worker ${worker.uuid } from free pool`);
+      logger().verbose(`<worker:${worker.uuid }><statement:${statement.statementIndex}>: executing`);
       const processPromise = worker.handleTask(statement);
 
       processPromise.then(() => {
-        logger().debug(`Returning worker ${worker.uuid} to free pool`);
+        logger().verbose(`<worker:${worker.uuid}><statement:${statement.statementIndex}>: complete`);
+      }).catch((e) => {
+        logger().error(`<worker:${worker.uuid}><statement:${statement.statementIndex}>: encountered error`);
+      }).finally(() => {
+        logger().debug(`<${worker.uuid}>: free`);
         workerPool.push(worker);
       })
 
