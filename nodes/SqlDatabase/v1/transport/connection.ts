@@ -1,4 +1,3 @@
-import { logger } from "../actions";
 import { getJavaInstance } from "./java";
 
 export const reserveConnection = ({user, password, jdbcUrl}) => {
@@ -7,7 +6,7 @@ export const reserveConnection = ({user, password, jdbcUrl}) => {
 
   const [urlPart, ...parameters] = jdbcUrl.split(';', 50);
 
-  if(parameters){
+  if(parameters && parameters.length > 0){
     for(const parameterString of parameters){
       const [parameterKey, parameterValue] = parameterString.split('=', 2);
 

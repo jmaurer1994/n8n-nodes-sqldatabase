@@ -14,12 +14,14 @@ export const getJavaInstance = (): NodeAPI => {
 
 export const initializeJvm = ({ driverDirectory, driverClass }) => {
   if (NodeJavaCore.isJvmCreated()) {
+
     return NodeJavaCore;
   }
 
+
   try {
     if (driverDirectory) {
-            logger().debug(`Scanning ${driverDirectory} for JAR files`);
+        logger().debug(`Scanning ${driverDirectory} for JAR files`);
       const foundJarFiles = searchDirectoryForFileType(driverDirectory, '.jar');
       if (foundJarFiles.length > 0) {
         for (let pathIndex = 0; pathIndex < foundJarFiles.length; pathIndex++) {
