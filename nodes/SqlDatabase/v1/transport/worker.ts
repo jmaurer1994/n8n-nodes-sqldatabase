@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { processStatement } from "./statement";
-import { logger } from "../actions/statement/execute/execute";
+import { logger } from "../actions";
 import { reserveConnection } from './connection';
 
 export const createWorkerPool = (connectionOptions) => {

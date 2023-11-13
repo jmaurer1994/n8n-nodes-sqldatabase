@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-export { route } from './route';
+export { route, logger } from './route';
 export { credentials } from './credentials'
 
 import * as statement from './statement';

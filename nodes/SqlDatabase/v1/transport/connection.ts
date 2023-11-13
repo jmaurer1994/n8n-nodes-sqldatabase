@@ -1,3 +1,4 @@
+import { logger } from "../actions";
 import { getJavaInstance } from "./java";
 
 export const reserveConnection = ({user, password, jdbcUrl}) => {

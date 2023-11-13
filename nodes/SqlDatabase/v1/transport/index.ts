@@ -1,7 +1,8 @@
 import * as java from './java'
 import { createWorkerPool } from './worker'
 import { createStatementQueue } from './statement'
-import { SqlDatabaseNodeOptions, logger } from '../actions/statement/execute/execute';
+import { SqlDatabaseNodeOptions } from '../actions/statement/execute/execute';
+import { logger } from '../actions';
 
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

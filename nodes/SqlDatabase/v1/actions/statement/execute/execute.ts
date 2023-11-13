@@ -1,16 +1,12 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { executeStatementBatch } from '../../../transport';
+import { logger } from '../../route';
 
 export const SqlDatabaseNodeOptions = {} as any;
-
-let _logger = null as any;
-
-export const logger = () => _logger;
 
 export async function execute(
   this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
-  _logger = this.logger;
   const { user, password, jdbcUrl, driverDirectory, driverClass, maxConcurrentConnections } = await this.getCredentials('sqlDatabase') as any;
 
   SqlDatabaseNodeOptions.continueOnFail = this.continueOnFail();

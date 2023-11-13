@@ -1,7 +1,7 @@
 import NodeJavaCore, { NodeAPI } from "java";
 import { readdirSync, realpathSync } from 'node:fs';
 
-import { logger } from "../actions/statement/execute/execute";
+import { logger } from "../actions";
 
 NodeJavaCore.asyncOptions = {
   asyncSuffix: "Async",
