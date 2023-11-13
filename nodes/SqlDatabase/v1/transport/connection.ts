@@ -6,9 +6,7 @@ export const reserveConnection = ({user, password, jdbcUrl}) => {
   const connectionProperties = java.newInstanceSync('java.util.Properties');
 
   const [urlPart, ...parameters] = jdbcUrl.split(';', 50);
-  console.log('===============================================================================================\n\n\n\n')
-  console.log(urlPart)
-  console.log(parameters)
+
   if(parameters){
     for(const parameterString of parameters){
       const [parameterKey, parameterValue] = parameterString.split('=', 2);
@@ -34,7 +32,6 @@ export const reserveConnection = ({user, password, jdbcUrl}) => {
 
         throw parameterInvalidError;
       }
-      logger().d
       connectionProperties.put(parameterKey, parameterValue);
     }
   }
@@ -46,7 +43,7 @@ export const reserveConnection = ({user, password, jdbcUrl}) => {
     connectionProperties.put('password', password);
   }
 
-  const connectionObject = java.callStaticMethodSync('java.sql.DriverManager', 'getConnection', jdbcUrl, connectionProperties);
+  const connectionObject = java.callStaticMethodSync('java.sql.DriverManager', 'getConnection', urlPart, connectionProperties);
 
   return connectionObject;
 }
