@@ -2,7 +2,6 @@ import NodeJavaCore, { NodeAPI } from "java";
 import { readdirSync, realpathSync } from 'node:fs';
 
 import { logger } from "../actions";
-import { SqlDatabaseExecutionParameters } from "../actions/parameters";
 
 NodeJavaCore.asyncOptions = {
   asyncSuffix: "Async",
@@ -13,19 +12,20 @@ export const getJavaInstance = (): NodeAPI => {
   return NodeJavaCore;
 }
 
-export const initializeJvm = () => {
-  const { driverDirectory, driverClass } = SqlDatabaseExecutionParameters;
+export const initializeJvm = ({ driverDirectory, driverClass }) => {
   if (NodeJavaCore.isJvmCreated()) {
+
     return NodeJavaCore;
   }
 
+
   try {
     if (driverDirectory) {
-      logger().log('debug', `Scanning ${driverDirectory} for JAR files`);
+        logger().debug(`Scanning ${driverDirectory} for JAR files`);
       const foundJarFiles = searchDirectoryForFileType(driverDirectory, '.jar');
       if (foundJarFiles.length > 0) {
         for (let pathIndex = 0; pathIndex < foundJarFiles.length; pathIndex++) {
-          logger().log('debug', `Adding ${foundJarFiles[pathIndex]} to classpath`);
+          logger().debug(`Adding ${foundJarFiles[pathIndex]} to classpath`);
           NodeJavaCore.classpath.push(foundJarFiles[pathIndex]);
         }
       }
@@ -39,7 +39,7 @@ export const initializeJvm = () => {
       err.push("Specified path not found");
     }
 
-    logger().log('error', err.join(': '));
+    logger().error(err.join(': '));
 
     throw Error(err.join(': '));
   }
@@ -50,7 +50,7 @@ export const initializeJvm = () => {
       NodeJavaCore.callStaticMethod(driver, 'registerDriver');
     }
   } catch (e) {
-    logger().log('error', `Could not register driver with JDBC DriverManager`);
+    logger().error(`Could not register driver with JDBC DriverManager`);
   }
 
   return NodeJavaCore;
@@ -69,10 +69,10 @@ const searchDirectoryForFileType = (directory: string, fileExtension: string): s
 
 
   for (const dirEnt of dir) {
-    logger().log('debug', `dirent: ${dirEnt} ${dirEnt.name}`)
+    logger().debug(`dirent: ${dirEnt} ${dirEnt.name}`)
     if (dirEnt.name?.endsWith(fileExtension)) {
       const path = `${dirEnt.path}/${dirEnt.name}`
-      logger().log('debug', `pushing ${path} onto classpath`);
+      logger().debug(`pushing ${path} onto classpath`);
       matchedFiles.push(path);
     } else {
       matchedFiles.push(...searchDirectoryForFileType(`${directory}/${dirEnt.name}`, '.jar'));

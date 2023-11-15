@@ -1,6 +1,8 @@
 import { createWorkerPool } from './worker'
 import { createStatementQueue } from './statement'
+import { SqlDatabaseNodeOptions } from '../actions/statement/execute/execute';
 import { logger } from '../actions';
+
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -12,27 +14,27 @@ export const executeStatementBatch = async (getStatement) => {
   const statementBatchResults: any[] = [];
   const taskResults: Promise<any>[] = [];
 
-  logger().log('debug', "Beginning execute statement batch process");
+  logger().debug("Beginning execute statement batch process");
   do {
     const statement = dequeueStatement();
     if (statement.sql === null) {
       const busyWorkers = busyWorkerCount();
       if (busyWorkers > 0) {
-        logger().log('debug', `Waiting for ${busyWorkers} worker to finish their task`);
+        logger().debug(`Waiting for ${busyWorkers} worker to finish their task`);
         await sleep(100);
         continue;
       }
-      logger().log('debug', "Finished processing all statements");
+      logger().debug("Finished processing all statements");
       break;
     }
 
-    logger().log('debug', `Got item ${statement.itemIndex} from queue, dispatching for processing`);
+    logger().debug(`Got item ${statement.itemIndex} from queue, dispatching for processing`);
     let taskResult = null as any;
     do {
       taskResult = dispatchTask(statement);
       if (taskResult === null) {
         //couldnt reserve another connection
-        logger().log('debug', "Waiting for free connection to continue processing");
+        logger().debug("Waiting for free connection to continue processing");
         await sleep(1000);
       }
     } while (taskResult === null);
@@ -40,12 +42,18 @@ export const executeStatementBatch = async (getStatement) => {
     taskResults.push(taskResult);
 
     taskResult.then(rawResult => {
-      logger().log('debug', `Storing result for item ${rawResult.itemIndex}`);
+      logger().verbose(`Storing result for item ${rawResult.itemIndex}`);
       statementBatchResults.push(rawResult);
+    }).catch(e => {
+      logger().error(`An error was encountered during task execution for statement ${ statement.itemIndex }\t\n${e}`);
+      if(!SqlDatabaseNodeOptions.continueOnFail){
+        throw e;
+      }
+      logger().verbose(`Continuing execution based on execution parameter`);
     });
   } while (true);
 
-  logger().log('debug', "Closing batch");
+  logger().debug("Closing batch");
   destroyWorkerPool();
   return statementBatchResults;
 }

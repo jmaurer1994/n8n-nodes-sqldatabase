@@ -3,12 +3,12 @@ import { getColumnTypeByValue } from "./sqltypes";
 
 export const processResultSet = async (resultSetObject) => {
   try {
-    logger().log('debug', `Grabbing metadata`)
+    logger().debug(`Grabbing metadata`)
     const resultSetMetaDataObject = resultSetObject.getMetaData();
 
     const columnCount = resultSetMetaDataObject.getColumnCount();
     const columns: any[] = [];
-    logger().log('debug', `Detecting columns`)
+    logger().debug(`Detecting columns`)
     for (let i = 1; i <= columnCount; i++) {
       columns.push({
         name: resultSetMetaDataObject.getColumnName(i),
@@ -21,7 +21,7 @@ export const processResultSet = async (resultSetObject) => {
       });
     }
 
-    logger().log('debug', `Retrieving data`);
+    logger().debug(`Retrieving data`);
     const data: any[] = [];
     while (resultSetObject.next()) {
       const row: any[] = [];
@@ -36,11 +36,11 @@ export const processResultSet = async (resultSetObject) => {
 
       data.push(row);
     }
-    logger().log('debug', `Returning data`);
+    logger().debug(`Returning data`);
 
     return { columns, data };
   } catch (e) {
-    logger().log('error', `Error while processing resultset\n\t${e}`);
+    logger().error(`Error while processing resultset\n\t${e}`);
     throw e
   }
 }

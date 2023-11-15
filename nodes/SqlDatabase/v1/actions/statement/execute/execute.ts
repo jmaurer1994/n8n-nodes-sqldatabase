@@ -1,11 +1,12 @@
 import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { executeStatementBatch } from '../../../transport';
-import { logger } from '../..';
+import { logger } from '../../route';
+
+export const SqlDatabaseNodeOptions = {} as any;
 
 export async function execute(
   this: IExecuteFunctions,
 ): Promise<INodeExecutionData[]> {
-
 
   const outputOptions = this.getNodeParameter('additionalOptions', 0) as any;
   
@@ -31,7 +32,7 @@ export async function execute(
 const formatForOutput = (batchResults, { groupOutput }) => {
   const results: any[] = [];
 
-  logger().log('debug', `Formatting result for output`);
+  logger().debug(`Formatting result for output`);
 
   let referenceCols = null;
 

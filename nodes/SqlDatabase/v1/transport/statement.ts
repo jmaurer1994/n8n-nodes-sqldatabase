@@ -1,5 +1,5 @@
-import { processResultSet } from "./resultset";
 import { logger } from "../actions";
+import { processResultSet } from "./resultset";
 
 export const createStatementQueue = (getStatement) => {
   const retryQueue: any[] = []
@@ -9,7 +9,7 @@ export const createStatementQueue = (getStatement) => {
   const dequeueStatement = () => {
     if (retryQueue.length > 0) {
       const statement = retryQueue.pop();
-      logger().log('debug', `Retrying failed query: ${statement.split('\n').join('\n\t')}`);
+      logger().debug(`Retrying failed query: ${statement.split('\n').join('\n\t')}`);
       return retryQueue.pop();
     }
 
@@ -35,7 +35,7 @@ export const createStatementQueue = (getStatement) => {
 export const processStatement = (statement, connectionObject) => {
   return new Promise((resolve, reject) => {
     const { sql, itemIndex } = statement;
-    logger().log('debug', `Processing statement at item index ${itemIndex}\n\tsql:\n\t\t${sql.split('\n').join('\t\t\n')}\n`)
+    logger().debug(`Processing statement at item index ${itemIndex}\n\tsql:\n\t\t${sql.split('\n').join('\t\t\n')}\n`)
     try {
       const statementObject = connectionObject.createStatement();
 
@@ -47,12 +47,12 @@ export const processStatement = (statement, connectionObject) => {
             }
           } catch (e) {
             //attempt cleanup, but the statement is probably closed at this point anyway
-            logger().log('debug', `Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
+            logger().debug(`Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
           }
           reject(err); return;
         }
 
-        logger().log('debug', `Executed query, processing resultset`);
+        logger().debug(`Executed query, processing resultset`);
 
         const { columns, data } = await processResultSet(resultSetObject);
         //Todo check if they need to be closed first
@@ -62,7 +62,7 @@ export const processStatement = (statement, connectionObject) => {
           }
         } catch (e) {
           //attempt cleanup, but the statement is probably closed at this point anyway
-          logger().log('debug', `Attempted to close resultset, but encountered an error\n\titem: ${statement.statementIndex}`);
+          logger().debug(`Attempted to close resultset, but encountered an error\n\titem: ${statement.statementIndex}`);
         }
 
         try {
@@ -71,13 +71,13 @@ export const processStatement = (statement, connectionObject) => {
           }
         } catch (e) {
           //attempt cleanup, but the statement is probably closed at this point anyway
-          logger().log('debug', `Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
+          logger().debug(`Attempted to close statement, but encountered an error\n\titem: ${statement.statementIndex}`);
         }
 
         resolve({ columns, data, itemIndex}); return;
       });
     } catch (e) {
-      logger().log('error', `Error while processing statement at item index ${statement.itemIndex}`);
+      logger().error(`Error while processing statement at item index ${statement.itemIndex}`);
       reject(e); return;
     }
   })
