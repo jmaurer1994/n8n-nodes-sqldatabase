@@ -18,7 +18,6 @@ export const initializeJvm = ({ driverDirectory, driverClass }) => {
     return NodeJavaCore;
   }
 
-
   try {
     if (driverDirectory) {
         logger().debug(`Scanning ${driverDirectory} for JAR files`);

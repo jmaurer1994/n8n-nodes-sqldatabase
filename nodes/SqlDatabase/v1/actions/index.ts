@@ -7,10 +7,6 @@ import * as statement from './statement';
 
 export { statement };
 
-let _logger = null;
-
-export const logger = (logger?) => logger ? _logger = logger : _logger;
-
 export const properties: INodeProperties[] = [
     {
         displayName: 'Resource',

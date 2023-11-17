@@ -1,27 +1,49 @@
 import { logger } from "../actions";
 import { getColumnTypeByValue } from "./sqltypes";
 
-export const processResultSet = async (resultSetObject) => {
+export type ResultSetObject = {
+  next: () => boolean,
+  getMetaData: () => ResultSetMetaDataObject
+}
+
+export type ResultSetMetaDataObject = {
+  getColumnCount: () => number,
+  getColumnName: (columnIndex: number) => string,
+  getColumnLabel: (columnIndex: number) => string,
+  getColumnType: (columnIndex: number) => string,
+}
+
+export const getResultSetMetadata = (resultSetObject: ResultSetObject): ResultSetMetaDataObject | null => {
+  try{
+    return resultSetObject.getMetaData();
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
+const getColumnData = (resultSetMetaDataObject: ResultSetMetaDataObject) => {
+  //build columns
+  const columnCount = resultSetMetaDataObject.getColumnCount();
+  const columns: any[] = [];
+
+  for (let i = 1; i <= columnCount; i++) {
+    columns.push({
+      name: resultSetMetaDataObject.getColumnName(i),
+      index: i,
+      label: resultSetMetaDataObject.getColumnLabel(i),
+      type: {
+        id: resultSetMetaDataObject.getColumnType(i),
+        name: getColumnTypeByValue(resultSetMetaDataObject.getColumnType(i))
+      },
+    });
+  }
+  return columns
+}
+
+export const processResultSet = (resultSetMetaDataObject: ResultSetMetaDataObject, resultSetObject: ResultSetObject) => {
   try {
-    logger().debug(`Grabbing metadata`)
-    const resultSetMetaDataObject = resultSetObject.getMetaData();
-
-    const columnCount = resultSetMetaDataObject.getColumnCount();
-    const columns: any[] = [];
-    logger().debug(`Detecting columns`)
-    for (let i = 1; i <= columnCount; i++) {
-      columns.push({
-        name: resultSetMetaDataObject.getColumnName(i),
-        index: i,
-        label: resultSetMetaDataObject.getColumnLabel(i),
-        type: {
-          id: resultSetMetaDataObject.getColumnType(i),
-          name: getColumnTypeByValue(resultSetMetaDataObject.getColumnType(i))
-        },
-      });
-    }
-
-    logger().debug(`Retrieving data`);
+    const columns = getColumnData(resultSetMetaDataObject);
     const data: any[] = [];
     while (resultSetObject.next()) {
       const row: any[] = [];

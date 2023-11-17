@@ -1,11 +1,13 @@
-import { SqlDatabaseExecutionParameters } from "../actions/parameters";
 import { getJavaInstance } from "./java";
+import { StatementObject } from "./statement";
 
-export const reserveConnection = () => {
+export type ConnectionObject = {
+  createStatement: () => StatementObject
+}
+
+export const reserveConnection = ( user, password, jdbcUrl ) => {
   const java = getJavaInstance();
   const connectionProperties = java.newInstanceSync('java.util.Properties');
-  const { user, password, jdbcUrl } = SqlDatabaseExecutionParameters;
-
 
   const [urlPart, ...parameters] = jdbcUrl.split(';', 50);
 
