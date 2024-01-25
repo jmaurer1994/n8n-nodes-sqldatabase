@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="drivers">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/drivers/asjava.jar!/" />
+      <root url="jar://$PROJECT_DIR$/drivers/unijdbc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/drivers/ibmjsse.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,63 +1,23 @@
 import * as java from './java'
-import { createWorkerPool } from './worker'
-import { createStatementQueue } from './statement'
-import { SqlDatabaseNodeOptions } from '../actions/statement/execute/execute';
-import { logger } from '../actions';
 
+export type n8nJdbcConnector = {
+  executeQueriesAsync: () => string[];
+}
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-export const executeStatementBatch = async (javaOptions, connectionOptions, getStatement) => {
+export const executeStatementBatch = async (statementQueue, javaOptions, {jdbcUrl, user, password}) => {
   const javaInstance = java.initializeJvm(javaOptions);
+  const statementBatchResults = [];
+  const n8nJdbcConnectorObject = javaInstance.newInstance('n8nJdbcConnector', [jdbcUrl, user, password, 5]) as any;
 
-  javaInstance.import('java.sql.Types');
+  const resultPromise = new Promise((resolve, reject) => {
+    n8nJdbcConnectorObject.executeQueriesAsync(statementQueue, (err, result) => {
 
-  const { dispatchTask, busyWorkerCount, destroyWorkerPool } = createWorkerPool(connectionOptions);
-  const { dequeueStatement } = createStatementQueue(getStatement);
-
-  const statementBatchResults: any[] = [];
-  const taskResults: Promise<any>[] = [];
-
-  logger().debug("Beginning execute statement batch process");
-  do {
-    const statement = dequeueStatement();
-    if (statement.sql === null) {
-      const busyWorkers = busyWorkerCount();
-      if (busyWorkers > 0) {
-        logger().debug(`Waiting for ${busyWorkers} worker to finish their task`);
-        await sleep(100);
-        continue;
-      }
-      logger().debug("Finished processing all statements");
-      break;
-    }
-
-    logger().debug(`Got item ${statement.itemIndex} from queue, dispatching for processing`);
-    let taskResult = null as any;
-    do {
-      taskResult = dispatchTask(statement);
-      if (taskResult === null) {
-        //couldnt reserve another connection
-        logger().debug("Waiting for free connection to continue processing");
-        await sleep(1000);
-      }
-    } while (taskResult === null);
-
-    taskResults.push(taskResult);
-
-    taskResult.then(rawResult => {
-      logger().verbose(`Storing result for item ${rawResult.itemIndex}`);
-      statementBatchResults.push(rawResult);
-    }).catch(e => {
-      logger().error(`An error was encountered during task execution for statement ${ statement.itemIndex }\t\n${e}`);
-      if(!SqlDatabaseNodeOptions.continueOnFail){
-        throw e;
-      }
-      logger().verbose(`Continuing execution based on execution parameter`);
     });
-  } while (true);
+  });
+  
+  await resultPromise
 
-  logger().debug("Closing batch");
-  destroyWorkerPool();
+  console.log(resultPromise)
+
   return statementBatchResults;
 }

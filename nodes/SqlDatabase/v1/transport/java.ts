@@ -1,6 +1,6 @@
 import NodeJavaCore, { NodeAPI } from "java";
 import { readdirSync, realpathSync } from 'node:fs';
-
+import path from 'node:path'
 import { logger } from "../actions";
 
 NodeJavaCore.asyncOptions = {
@@ -17,7 +17,8 @@ export const initializeJvm = ({ driverDirectory, driverClass }) => {
 
     return NodeJavaCore;
   }
-
+  NodeJavaCore.options.push('-xrs')
+  NodeJavaCore.classpath.push(path.join(__dirname, 'n8nJdbcConnector.class'));
 
   try {
     if (driverDirectory) {

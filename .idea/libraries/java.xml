@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="java">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/node_modules/java/jarjar-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/node_modules/java/commons-lang3-node-java.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

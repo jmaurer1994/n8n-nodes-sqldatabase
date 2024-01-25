@@ -17,7 +17,9 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "tsc && gulp build:icons",
+    "buildJava": "javac nodes/SqlDatabase/v1/transport/n8nJdbcConnector.java -d dist/nodes/SqlDatabase/v1/transport",
+    "buildTs": "tsc && gulp build:icons",
+    "build": "npm run buildTs && npm run buildJava",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
