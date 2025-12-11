@@ -10,7 +10,8 @@ export async function route(this: IExecuteFunctions): Promise<INodeExecutionData
 	const operationResult: INodeExecutionData[] = [];
 
 	let executionData: INodeExecutionData | INodeExecutionData[] = [];
-  _logger = this.logger;
+  
+	_logger = this.logger;
 
 	const resource = this.getNodeParameter<SqlDatabase>('resource', 0);
 	let operation = this.getNodeParameter('operation', 0);

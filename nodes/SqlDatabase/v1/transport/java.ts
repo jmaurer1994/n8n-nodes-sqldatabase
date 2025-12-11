@@ -1,4 +1,4 @@
-import NodeJavaCore, { NodeAPI } from "java";
+import NodeJavaCore, { JavaObject } from "java";
 import { readdirSync, realpathSync } from 'node:fs';
 
 import { logger } from "../actions";
@@ -8,7 +8,7 @@ NodeJavaCore.asyncOptions = {
   syncSuffix: ""
 };
 
-export const getJavaInstance = (): NodeAPI => {
+export const getJavaInstance = (): JavaObject => {
   return NodeJavaCore;
 }
 
@@ -71,7 +71,7 @@ const searchDirectoryForFileType = (directory: string, fileExtension: string): s
   for (const dirEnt of dir) {
     logger().debug(`dirent: ${dirEnt} ${dirEnt.name}`)
     if (dirEnt.name?.endsWith(fileExtension)) {
-      const path = `${dirEnt.path}/${dirEnt.name}`
+      const path = `${dirEnt.parentPath}/${dirEnt.name}`
       logger().debug(`pushing ${path} onto classpath`);
       matchedFiles.push(path);
     } else {

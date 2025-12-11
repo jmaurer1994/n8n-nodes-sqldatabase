@@ -32,11 +32,11 @@ export const createWorkerPool = (connectionOptions) => {
       }
       logger().debug(`<${worker.uuid}>: not free`);
 
-      logger().verbose(`<worker:${worker.uuid }><statement:${statement.statementIndex}>: executing`);
+      logger().debug(`<worker:${worker.uuid }><statement:${statement.statementIndex}>: executing`);
       const processPromise = worker.handleTask(statement);
 
       processPromise.then(() => {
-        logger().verbose(`<worker:${worker.uuid}><statement:${statement.statementIndex}>: complete`);
+        logger().debug(`<worker:${worker.uuid}><statement:${statement.statementIndex}>: complete`);
       }).catch((e) => {
         logger().error(`<worker:${worker.uuid}><statement:${statement.statementIndex}>: encountered error`);
       }).finally(() => {

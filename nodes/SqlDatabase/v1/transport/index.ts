@@ -46,14 +46,14 @@ export const executeStatementBatch = async (javaOptions, connectionOptions, getS
     taskResults.push(taskResult);
 
     taskResult.then(rawResult => {
-      logger().verbose(`Storing result for item ${rawResult.itemIndex}`);
+      logger().debug(`Storing result for item ${rawResult.itemIndex}`);
       statementBatchResults.push(rawResult);
     }).catch(e => {
       logger().error(`An error was encountered during task execution for statement ${ statement.itemIndex }\t\n${e}`);
       if(!SqlDatabaseNodeOptions.continueOnFail){
         throw e;
       }
-      logger().verbose(`Continuing execution based on execution parameter`);
+      logger().debug(`Continuing execution based on execution parameter`);
     });
   } while (true);
 
