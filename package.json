@@ -1,11 +1,16 @@
 {
   "name": "n8n-nodes-sqldatabase",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "An n8n community node to execute sql statements against a database using a provided JDBC driver",
-  "keywords": ["n8n-community-node-package"],
+  "keywords": [
+    "n8n-community-node-package"
+  ],
   "license": "MIT",
   "homepage": "",
-  "author": { "name": "Joe Maurer", "email": "joe@maurer.gg" },
+  "author": {
+    "name": "Joe Maurer",
+    "email": "joe@maurer.gg"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jmaurer1994/n8n-nodes-sqldatabase.git"
@@ -20,11 +25,17 @@
     "release": "n8n-node release",
     "prepublishOnly": "n8n-node prerelease"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "credentials": ["dist/credentials/SqlDatabase.credentials.js"],
-    "nodes": ["dist/nodes/SqlDatabase/SqlDatabase.node.js"],
+    "credentials": [
+      "dist/credentials/SqlDatabase.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/SqlDatabase/SqlDatabase.node.js"
+    ],
     "strict": false
   },
   "devDependencies": {
@@ -36,6 +47,12 @@
     "release-it": "^19.0.4",
     "typescript": "5.9.2"
   },
-  "peerDependencies": { "n8n-workflow": "*" },
-  "dependencies": { "java": "^0.18.0", "path": "^0.12.7", "uuid": "^13.0.0" }
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "java": "^0.18.0",
+    "path": "^0.12.7",
+    "uuid": "^13.0.0"
+  }
 }
